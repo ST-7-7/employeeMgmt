@@ -40,3 +40,40 @@ export const addEmployee = async (req, res) => {
     return res.status(500).json({ message: "Internal error!" });
   }
 };
+
+export const updateEmployee = async (req, res) => {
+  const { name, email, designation } = req.body;
+  const { empid } = req.params;
+
+  if (!empid) {
+    return res.status(400).json({ message: "Empid is required!" });
+  }
+
+  try {
+    const existEmployeeId = await Employee.findOnd({ where: { empid } });
+    if (!existEmployeeId) {
+      return res.status(404).json({ message: "No employee found!" });
+    }
+    await Employee.update({ name, email, designation });
+    return res.status(200).json({ message: "Updated!" });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal error!" });
+  }
+};
+
+export const deleteEmployee = async (req, res) => {
+  const { empid } = req.params;
+  if (!empid) {
+    return res.status(400).json({ message: "Empid is required!" });
+  }
+
+  try {
+    const existEmployeeId = await Employee.findOne({ where: { empid } });
+    if (!existEmployeeId) {
+      return res.status(404).json({ message: "No employee found!" });
+    }
+    await Employee.destroy({ empid });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal error!" });
+  }
+};
